@@ -13,16 +13,13 @@ const db = new sqlite3.Database("./eusebius.db", (err) => {
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: "http://localhost:8081",
-    credentials: true,
-  })
-);
-
 app.get("/", (req, res) => {
   const message = "Welcome to the secret backend!";
   res.send(message);
+});
+
+app.listen(8000, () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });
 
 module.exports = app;
