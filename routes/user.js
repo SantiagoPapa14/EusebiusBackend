@@ -20,6 +20,10 @@ router.post("/login", async (req, res) => {
     "SELECT id, password FROM User WHERE email = ?",
     [email]
   );
+  if (user.length === 0) {
+    res.json({ message: "User Not Found." });
+    return;
+  }
   const match = await compare(password, user[0]?.password);
   if (match) {
     res.json({ message: "Success!", token: user[0].id });
