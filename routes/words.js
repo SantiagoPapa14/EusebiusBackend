@@ -6,41 +6,41 @@ router.use(express.json());
 
 router.get("/", async (req, res) => {
   try {
-    const id = req.headers.authorization.split(" ")[1];
     const words = await queryDatabase("SELECT * FROM Word WHERE userId = ?", [
-      id,
+      req.userData.id,
     ]);
     res.json(words);
   } catch (e) {
+    console.log(e);
     res.json({ message: e.message });
   }
 });
 
 router.post("/:word", async (req, res) => {
   try {
-    const id = req.headers.authorization.split(" ")[1];
     const word = req.params.word;
     const definition = req.body.definition;
     await queryDatabase(
       "INSERT INTO Word (userId, word, definition) VALUES (?, ?, ?)",
-      [id, word, definition]
+      [req.userData.id, word, definition]
     );
     res.json({ word, definition });
   } catch (e) {
+    console.log(e);
     res.json({ message: e.message });
   }
 });
 
 router.delete("/:word", async (req, res) => {
   try {
-    const id = req.headers.authorization.split(" ")[1];
     const word = req.params.word;
     await queryDatabase("DELETE FROM Word WHERE word = ? AND userId = ?", [
       word,
-      id,
+      req.userData.id,
     ]);
     res.json({ word });
   } catch (e) {
+    console.log(e);
     res.json({ message: e.message });
   }
 });

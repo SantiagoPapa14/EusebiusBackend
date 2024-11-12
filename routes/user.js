@@ -1,4 +1,5 @@
 const { queryDatabase } = require("../managers/sqliteAsyncManager");
+const { generateToken } = require("../middleware/authware");
 const { hash, compare } = require("bcrypt");
 
 const express = require("express");
@@ -6,7 +7,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.get("/", async (req, res) => {
-  res.json({ message: "I have no clue who you are!!!" });
+  res.json({ message: `Hi there ${req.userData.email}! You are logged in.` });
 });
 
 router.post("/login", async (req, res) => {
@@ -26,7 +27,7 @@ router.post("/login", async (req, res) => {
   }
   const match = await compare(password, user[0]?.password);
   if (match) {
-    res.json({ message: "Success!", token: user[0].id });
+    res.json({ message: "Success!", token: generateToken(email, user[0].id) });
   } else {
     res.json({ message: "Incorrect credentials." });
   }
@@ -40,11 +41,14 @@ router.post("/register", async (req, res) => {
     return;
   }
   const hashedPass = await hash(password, 10);
-  await queryDatabase("INSERT INTO User (email, password) VALUES (?, ?)", [
-    email,
-    hashedPass,
-  ]);
-  res.json({ message: "Success!", token: "letsPretendThisIsARealToken" });
+  const newUser = await queryDatabase(
+    "INSERT INTO User (email, password) VALUES (?, ?)",
+    [email, hashedPass]
+  );
+  res.json({
+    message: "Success!",
+    token: generateToken(email, newUser.insertId),
+  });
 });
 
 module.exports = router;

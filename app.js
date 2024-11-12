@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { validateAuthorization } = require("./middleware/authware");
 
 const port = process.env.PORT || 4000;
 
@@ -11,13 +12,16 @@ const userRoutes = require("./routes/user.js");
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(validateAuthorization);
 
 app.use((req, res, next) => {
   const now = new Date().toISOString();
   console.log(
-    `[${now.split(".")[0]}] ${JSON.stringify(req.method)} ${JSON.stringify(
-      req.url
-    )} ${JSON.stringify(req.body)}`
+    `\n[${now.split(".")[0].replace("T", " ")}] ${JSON.stringify(
+      req.method
+    )} ${JSON.stringify(req.url)} \n body: ${JSON.stringify(
+      req.body
+    )} \n tokenData: ${JSON.stringify(req.userData)}`
   );
   next();
 });
