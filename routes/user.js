@@ -12,6 +12,10 @@ router.get("/", async (req, res) => {
 router.post("/login", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  if (!email || !password) {
+    res.json({ message: "Missing email or password." });
+    return;
+  }
   const user = await queryDatabase(
     "SELECT id, password FROM User WHERE email = ?",
     [email]
@@ -27,6 +31,10 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  if (!email || !password) {
+    res.json({ message: "Missing email or password." });
+    return;
+  }
   const hashedPass = await hash(password, 10);
   await queryDatabase("INSERT INTO User (email, password) VALUES (?, ?)", [
     email,
