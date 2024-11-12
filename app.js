@@ -14,8 +14,12 @@ app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   const now = new Date().toISOString();
-  console.log(`[${now}] ${req.method} ${req.url} ${req.body}`);
-  next(); // Pass control to the next middleware/route handler
+  console.log(
+    `[${now.split(".")[0]}] ${JSON.stringify(req.method)} ${JSON.stringify(
+      req.url
+    )} ${JSON.stringify(req.body)}`
+  );
+  next();
 });
 
 app.get("/", (req, res) => {

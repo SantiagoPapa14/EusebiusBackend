@@ -1,4 +1,5 @@
 const { queryDatabase } = require("../managers/sqliteAsyncManager");
+const { hash, compare } = require("bcrypt");
 
 const express = require("express");
 const router = express.Router();
@@ -12,22 +13,24 @@ router.post("/login", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = await queryDatabase(
-    "SELECT password FROM User WHERE email = ?",
+    "SELECT id, password FROM User WHERE email = ?",
     [email]
   );
-  if (user[0].password === password) {
-    res.json({ message: "Success!", token: "letsPretendThisIsARealToken" });
+  const match = await compare(password, user[0]?.password);
+  if (match) {
+    res.json({ message: "Success!", token: user[0].id });
   } else {
-    res.json({ message: "Incorrect password!!!" });
+    res.json({ message: "Incorrect credentials." });
   }
 });
 
 router.post("/register", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPass = await hash(password, 10);
   await queryDatabase("INSERT INTO User (email, password) VALUES (?, ?)", [
     email,
-    password,
+    hashedPass,
   ]);
   res.json({ message: "Success!", token: "letsPretendThisIsARealToken" });
 });
