@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const port = process.env.PORT || 4000;
+
 const app = express();
 const readingsRoutes = require("./routes/readings.js");
 const wordsRoutes = require("./routes/words.js");
@@ -25,8 +27,8 @@ app.use("/readings", readingsRoutes);
 app.use("/words", wordsRoutes);
 app.use("/user", userRoutes);
 
-app.listen(8000, () => {
-  console.log(`Server is running at http://localhost:8000`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });
 
 module.exports = app;
