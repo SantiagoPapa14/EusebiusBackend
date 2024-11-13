@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const key =
-  "thisIsNotASecretAndShouldNotBeUsedAsOnePleaseReplaceThisWithAnActualKeySoYouDontGetHacked";
+require("dotenv").config();
+
+const key = process.env.JWT_KEY;
 
 function generateToken(email, id) {
   const token = jwt.sign({ email, id }, key);

@@ -40,6 +40,18 @@ router.post("/register", async (req, res) => {
     res.json({ message: "Missing email or password." });
     return;
   }
+  if (!email.includes("@") && !email.includes(".")) {
+    res.json({ message: "Invalid email." });
+    return;
+  }
+  const existingUser = await queryDatabase(
+    `SELECT * FROM "User" WHERE "email" = $1`,
+    [email]
+  );
+  if (existingUser.length > 0) {
+    res.json({ message: "Email already registered." });
+    return;
+  }
   const hashedPass = await hash(password, 10);
   const newUser = await queryDatabase(
     `INSERT INTO "User" (email, password) VALUES ($1, $2)`,
