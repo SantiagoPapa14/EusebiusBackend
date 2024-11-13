@@ -1,4 +1,4 @@
-const { queryDatabase } = require("../managers/sqliteAsyncManager");
+const { queryDatabase } = require("../managers/pgAsyncManager");
 const { generateToken } = require("../middleware/authware");
 const { hash, compare } = require("bcrypt");
 
@@ -18,7 +18,7 @@ router.post("/login", async (req, res) => {
     return;
   }
   const user = await queryDatabase(
-    "SELECT id, password FROM User WHERE email = ?",
+    `SELECT "id", "password" FROM "User" WHERE "email" = $1`,
     [email]
   );
   if (user.length === 0) {
@@ -42,7 +42,7 @@ router.post("/register", async (req, res) => {
   }
   const hashedPass = await hash(password, 10);
   const newUser = await queryDatabase(
-    "INSERT INTO User (email, password) VALUES (?, ?)",
+    `INSERT INTO "User" (email, password) VALUES ($1, $2)`,
     [email, hashedPass]
   );
   res.json({
