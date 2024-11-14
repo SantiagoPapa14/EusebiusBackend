@@ -27,7 +27,7 @@ router.post("/:word", async (req, res) => {
     );
     res.json({ word, definition });
   } catch (e) {
-    console.log(e);
+    console.log(e.message);
     res.json({ message: e.message });
   }
 });

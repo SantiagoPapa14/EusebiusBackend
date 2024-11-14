@@ -26,7 +26,7 @@ const validateAuthorization = (req, res, next) => {
     req.userData = decoded;
     next();
   } catch (err) {
-    return res.status(403).json("Forbidden.");
+    return res.status(401).json("Unauthorized.");
   }
 };
 

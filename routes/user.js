@@ -54,12 +54,12 @@ router.post("/register", async (req, res) => {
   }
   const hashedPass = await hash(password, 10);
   const newUser = await queryDatabase(
-    `INSERT INTO "User" (email, password) VALUES ($1, $2)`,
+    `INSERT INTO "User" (email, password) VALUES ($1, $2) RETURNING "id"`,
     [email, hashedPass]
   );
   res.json({
     message: "Success!",
-    token: generateToken(email, newUser.insertId),
+    token: generateToken(email, newUser[0].id),
   });
 });
 
