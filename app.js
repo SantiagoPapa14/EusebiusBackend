@@ -8,6 +8,7 @@ const app = express();
 const readingsRoutes = require("./routes/readings.js");
 const wordsRoutes = require("./routes/words.js");
 const userRoutes = require("./routes/user.js");
+const bibleRoutes = require("./routes/bible.js");
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 app.use("/readings", readingsRoutes);
 app.use("/words", wordsRoutes);
 app.use("/user", userRoutes);
+app.use("/bible", bibleRoutes);
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running at http://localhost:${port}`);

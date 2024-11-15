@@ -18,4 +18,32 @@ const fetchVerses = async (reading, language) => {
   return result;
 };
 
-module.exports = { fetchVerses };
+const getBookChapter = async (book, chapter) => {
+  const reading = {
+    book: book,
+    latinContent: [],
+    englishContent: [],
+  };
+
+  const verses = await queryDatabase(
+    `SELECT MIN("Verse") AS "start", MAX("Verse") AS "end" FROM "LatinBible" WHERE "Book" = $1 AND "Chapter" = $2`,
+    [book, chapter]
+  );
+  reading.verses = [
+    {
+      chapter: chapter,
+      start: verses[0].start,
+      end: verses[0].end,
+    },
+  ];
+
+  const latinContent = await fetchVerses(reading, "Latin");
+  const englishContent = await fetchVerses(reading, "English");
+
+  reading.latinContent = latinContent;
+  reading.englishContent = englishContent;
+
+  return reading;
+};
+
+module.exports = { fetchVerses, getBookChapter };
