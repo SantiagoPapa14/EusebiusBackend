@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const key =
-  "thisIsNotASecretAndShouldNotBeUsedAsOnePleaseReplaceThisWithAnActualKeySoYouDontGetHacked";
+require("dotenv").config();
+
+const key = process.env.JWT_KEY;
 
 function generateToken(email, id) {
   const token = jwt.sign({ email, id }, key);
@@ -25,7 +26,7 @@ const validateAuthorization = (req, res, next) => {
     req.userData = decoded;
     next();
   } catch (err) {
-    return res.status(403).json("Forbidden.");
+    return res.status(401).json("Unauthorized.");
   }
 };
 
