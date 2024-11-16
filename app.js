@@ -9,6 +9,7 @@ const readingsRoutes = require("./routes/readings.js");
 const wordsRoutes = require("./routes/words.js");
 const userRoutes = require("./routes/user.js");
 const bibleRoutes = require("./routes/bible.js");
+const professorRoutes = require("./routes/professor.js");
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -36,6 +37,7 @@ app.use("/readings", readingsRoutes);
 app.use("/words", wordsRoutes);
 app.use("/user", userRoutes);
 app.use("/bible", bibleRoutes);
+app.use("/professor", professorRoutes);
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running at http://localhost:${port}`);

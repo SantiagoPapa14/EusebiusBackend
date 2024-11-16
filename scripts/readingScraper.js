@@ -7,7 +7,11 @@ function parseReference(reference) {
     verses: [],
   };
   const match = reference.match(/^([\w\s]+) (\d+:\d.*)$/);
-  parsed.book = match[1];
+  const book = match[1]
+    .replaceAll("First", "1")
+    .replaceAll("Second", "2")
+    .replaceAll("Third", "3");
+  parsed.book = book;
 
   //Multiple verses in same chapter
   if (match[2].includes(",")) {
