@@ -32,6 +32,21 @@ router.post("/:word", async (req, res) => {
   }
 });
 
+router.patch("/:wordId", async (req, res) => {
+  try {
+    const wordId = req.params.wordId;
+    const { word, definition } = req.body;
+    await queryDatabase(
+      `UPDATE "Word" SET "word" = $1, "definition" = $2 WHERE "id" = $3 AND "userId" = $4`,
+      [word, definition, wordId, req.userData.id]
+    );
+    res.json({ word, definition });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ message: e.message });
+  }
+});
+
 router.delete("/:word", async (req, res) => {
   try {
     const word = req.params.word;
