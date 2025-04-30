@@ -10,7 +10,7 @@ const fetchVerses = async (reading, language) => {
   for (const verse of reading.verses) {
     const allRows = await queryDatabase(
       `SELECT * FROM "${language}Bible" WHERE "Book" = $1 AND "Chapter" = $2 AND "Verse" BETWEEN $3 AND $4`,
-      [reading.book, verse.chapter, verse.start, verse.end]
+      [reading.book, verse.chapter, verse.start, verse.end],
     );
     result.push(...allRows);
   }
@@ -18,16 +18,20 @@ const fetchVerses = async (reading, language) => {
   return result;
 };
 
-const getBookChapter = async (book, chapter) => {
+const getBookChapter = async (
+  book,
+  chapter,
+  languages = { source: "English", target: "Latin" },
+) => {
   const reading = {
     book: book,
-    latinContent: [],
-    englishContent: [],
+    targetContent: [],
+    sourceContent: [],
   };
 
   const verses = await queryDatabase(
     `SELECT MIN("Verse") AS "start", MAX("Verse") AS "end" FROM "LatinBible" WHERE "Book" = $1 AND "Chapter" = $2`,
-    [book, chapter]
+    [book, chapter],
   );
   reading.verses = [
     {
@@ -37,11 +41,11 @@ const getBookChapter = async (book, chapter) => {
     },
   ];
 
-  const latinContent = await fetchVerses(reading, "Latin");
-  const englishContent = await fetchVerses(reading, "English");
+  const sourceContent = await fetchVerses(reading, languages.source);
+  const targetContent = await fetchVerses(reading, languages.target);
 
-  reading.latinContent = latinContent;
-  reading.englishContent = englishContent;
+  reading.sourceContent = sourceContent;
+  reading.targetContent = targetContent;
 
   return reading;
 };

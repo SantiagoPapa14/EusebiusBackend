@@ -12,14 +12,15 @@ router.get("/", async (req, res) => {
 
 router.get("/populated", async (req, res) => {
   const readings = await getReadingByItself();
+  const { source, target } = req.query;
   await Promise.all(
     Object.entries(readings).map(async ([key, value]) => {
       if (value) {
-        value.latinContent = await fetchVerses(value, "Latin");
-        value.englishContent = await fetchVerses(value, "English");
+        value.sourceContent = await fetchVerses(value, source);
+        value.targetContent = await fetchVerses(value, target);
       }
       return [key, value];
-    })
+    }),
   );
   res.json(readings);
 });
