@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
 router.get("/populated", async (req, res) => {
   const readings = await getReadingByItself();
   const { source, target } = req.query;
+  console.log("source and target", source, target);
   await Promise.all(
     Object.entries(readings).map(async ([key, value]) => {
       if (value) {
