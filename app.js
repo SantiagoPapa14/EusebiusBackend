@@ -14,19 +14,20 @@ const professorRoutes = require("./routes/professor.js");
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(validateAuthorization);
 
 app.use((req, res, next) => {
   const now = new Date().toISOString();
   console.log(
     `\n[${now.split(".")[0].replace("T", " ")}] ${JSON.stringify(
-      req.method
+      req.method,
     )} ${JSON.stringify(req.url)} \n body: ${JSON.stringify(
-      req.body
-    )} \n tokenData: ${JSON.stringify(req.userData)}`
+      req.body,
+    )} \n tokenData: ${JSON.stringify(req.userData)}`,
   );
   next();
 });
+
+app.use(validateAuthorization);
 
 app.get("/", (req, res) => {
   const message = "Welcome to the secret backend!";
