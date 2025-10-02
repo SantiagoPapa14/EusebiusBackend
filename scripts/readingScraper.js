@@ -1,3 +1,81 @@
+const bibleBooksToCode = {
+  Genesis: "GEN",
+  Exodus: "EXO",
+  Leviticus: "LEV",
+  Numbers: "NUM",
+  Deuteronomy: "DEU",
+  Joshua: "JOS",
+  Judges: "JDG",
+  Ruth: "RUT",
+  "1 Samuel": "1SA",
+  "2 Samuel": "2SA",
+  "1 Kings": "1KI",
+  "2 Kings": "2KI",
+  "1 Chronicles": "1CH",
+  "2 Chronicles": "2CH",
+  Ezra: "EZR",
+  Nehemiah: "NEH",
+  Tobit: "TOB",
+  Judith: "JDT",
+  Esther: "EST",
+  "1 Maccabees": "1MA",
+  "2 Maccabees": "2MA",
+  Job: "JOB",
+  Psalms: "PSA",
+  Proverbs: "PRO",
+  Ecclesiastes: "ECC",
+  "Song of Solomon": "SNG",
+  Wisdom: "WIS",
+  Sirach: "SIR",
+  Isaiah: "ISA",
+  Jeremiah: "JER",
+  Lamentations: "LAM",
+  Baruch: "BAR",
+  Ezekiel: "EZK",
+  Daniel: "DAN",
+  Hosea: "HOS",
+  Joel: "JOL",
+  Amos: "AMO",
+  Obadiah: "OBA",
+  Jonah: "JON",
+  Micah: "MIC",
+  Nahum: "NAM",
+  Habakkuk: "HAB",
+  Zephaniah: "ZEP",
+  Haggai: "HAG",
+  Zechariah: "ZEC",
+  Malachi: "MAL",
+
+  // New Testament
+  Matthew: "MAT",
+  Mark: "MRK",
+  Luke: "LUK",
+  John: "JHN",
+  Acts: "ACT",
+  Romans: "ROM",
+  "1 Corinthians": "1CO",
+  "2 Corinthians": "2CO",
+  Galatians: "GAL",
+  Ephesians: "EPH",
+  Philippians: "PHP",
+  Colossians: "COL",
+  "1 Thessalonians": "1TH",
+  "2 Thessalonians": "2TH",
+  "1 Timothy": "1TI",
+  "2 Timothy": "2TI",
+  Titus: "TIT",
+  Philemon: "PHM",
+  Hebrews: "HEB",
+  James: "JAS",
+  "1 Peter": "1PE",
+  "2 Peter": "2PE",
+  "1 John": "1JN",
+  "2 John": "2JN",
+  "3 John": "3JN",
+  Jude: "JUD",
+  Revelation: "REV",
+};
+
 function parseReference(reference) {
   if (!reference) {
     return null;
@@ -11,7 +89,7 @@ function parseReference(reference) {
     .replaceAll("First", "1")
     .replaceAll("Second", "2")
     .replaceAll("Third", "3");
-  parsed.book = book;
+  parsed.book = bibleBooksToCode[book];
 
   //Multiple verses in same chapter
   if (match[2].includes(",")) {
@@ -56,7 +134,7 @@ async function getReadingByItself() {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const response = await fetch(
-    `https://www.catholic.org/bible/daily_reading/?select_date=${year}-${month}-${day}`
+    `https://www.catholic.org/bible/daily_reading/?select_date=${year}-${month}-${day}`,
   );
   if (!response.ok) {
     throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -65,25 +143,25 @@ async function getReadingByItself() {
   const rawHtmlData = html
     .split(
       `<a href="https://catholicresources.education/pdf/daily-readings/" target="_blank" rel="noopener" title="Printable PDF of Today's Reading"><i class="fa fa-file-pdf-o" title="Printable PDF of Today's Reading" alt="Printable PDF icon"></i> Printable PDF of Today's Reading</a><br>
-			<a href="/bible/daily_reading/archive.php"><i class="fa fa-calendar" title="Daily Readings Archive" alt="Calendar icon"></i> Past / Future Daily Readings</a>`
+			<a href="/bible/daily_reading/archive.php"><i class="fa fa-calendar" title="Daily Readings Archive" alt="Calendar icon"></i> Past / Future Daily Readings</a>`,
     )[0]
     .split(
       `<div class="col-md-6">
-			<h4>Daily Reading for `
+			<h4>Daily Reading for `,
     )[1]
     .split(`</h4>\n`)[1];
   const result = {
     psalm: parseReference(
-      rawHtmlData.split("Responsorial Psalm, <em>")[1].split("</em>")[0]
+      rawHtmlData.split("Responsorial Psalm, <em>")[1].split("</em>")[0],
     ),
     gospel: parseReference(
-      rawHtmlData.split("Gospel, <em>")[1].split("</em>")[0]
+      rawHtmlData.split("Gospel, <em>")[1].split("</em>")[0],
     ),
     firstReading: parseReference(
-      rawHtmlData.split("Reading 1, <em>")[1].split("</em>")[0]
+      rawHtmlData.split("Reading 1, <em>")[1].split("</em>")[0],
     ),
     secondReading: parseReference(
-      rawHtmlData?.split("Reading 2, <em>")[1]?.split("</em>")[0]
+      rawHtmlData?.split("Reading 2, <em>")[1]?.split("</em>")[0],
     ),
   };
   return result;

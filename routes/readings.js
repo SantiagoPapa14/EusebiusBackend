@@ -7,20 +7,13 @@ router.use(express.json());
 
 router.get("/", async (req, res) => {
   const readings = await getReadingByItself();
+  console.log(JSON.stringify(readings));
   res.json(readings);
 });
 
 router.get("/populated", async (req, res) => {
   const readings = await getReadingByItself();
-  await Promise.all(
-    Object.entries(readings).map(async ([key, value]) => {
-      if (value) {
-        value.latinContent = await fetchVerses(value, "Latin");
-        value.englishContent = await fetchVerses(value, "English");
-      }
-      return [key, value];
-    })
-  );
+  console.log(JSON.stringify(readings));
   res.json(readings);
 });
 
