@@ -12,9 +12,33 @@ const pool = new Pool({
 
 pool
   .connect()
-  .then((client) => {
-    console.log("Connected to Postgres!");
-    client.release();
+  .then(async (client) => {
+    try {
+      console.log("Initializing database...");
+      await client.query(`
+      CREATE TABLE IF NOT EXISTS "User" (
+        "id" SERIAL PRIMARY KEY,
+        "email" VARCHAR(255) UNIQUE NOT NULL,
+        "password" VARCHAR(255) NOT NULL
+      );
+    `);
+      console.log("User Table Initialized");
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS "Word" (
+          "id" SERIAL PRIMARY KEY,
+          "userId" INT NOT NULL,
+          "word" VARCHAR(255) NOT NULL,
+          "definition" VARCHAR(255) NOT NULL
+        );
+      `);
+      console.log("Word Table Initialized");
+      console.log("Initialization Complete");
+    } catch (err) {
+      console.error("Error initializing database", err.stack);
+      throw err;
+    } finally {
+      client.release();
+    }
   })
   .catch((err) => console.error("Connection error", err.stack));
 
@@ -25,24 +49,6 @@ async function queryDatabase(sql, params) {
     return result.rows;
   } catch (err) {
     console.error("Error running query", err.stack);
-    throw err;
-  } finally {
-    client.release();
-  }
-}
-
-async function initializeDatabase() {
-  const client = await pool.connect();
-  try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS "User" (
-        "id" SERIAL PRIMARY KEY,
-        "email" VARCHAR(255) UNIQUE NOT NULL,
-        "password" VARCHAR(255) NOT NULL
-      );
-    `);
-  } catch (err) {
-    console.error("Error initializing database", err.stack);
     throw err;
   } finally {
     client.release();
