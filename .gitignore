@@ -1,3 +1,41 @@
-node_modules/
-node_modules
-.env
+# Build directories
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio files
+.vs/
+*.vscode/
+*.vsconfig
+
+# Rider files
+.idea/
+
+# ASP.NET Core secrets
+secrets.json
+appsettings.*.json
+
+# Publish directory
+publish/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+*.nuget.cache
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
