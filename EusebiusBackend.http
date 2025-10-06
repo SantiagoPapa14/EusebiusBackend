@@ -1,0 +1,6 @@
+@EusebiusBackend_HostAddress = http://localhost:5139
+
+GET {{EusebiusBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
