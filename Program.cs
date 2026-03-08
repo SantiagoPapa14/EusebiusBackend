@@ -59,13 +59,15 @@ builder
 // Allow CORS for development
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        "AllowFrontend",
-        policy =>
-        {
-            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-        }
-    );
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+			"https://eusebius.santiagopapa.com.ar",
+			"https://eusebiusapi.santiagopapa.com.ar"
+			)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 // Use controllers
@@ -88,7 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseCors("AllowFrontend");
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
