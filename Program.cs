@@ -8,17 +8,17 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Use the database
-var connectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+// Connect to database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbProvider = Environment.GetEnvironmentVariable("DB_PROVIDER");
 
-if (string.IsNullOrWhiteSpace(connectionString))
-    throw new Exception(
-        "No connection string found. Set DB_CONNECTION_STRING in Azure App Service!"
-    );
-
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    if (dbProvider == "postgres")
+        options.UseNpgsql(connectionString);
+    else
+        options.UseSqlite(connectionString);
+});
 
 // Add Identity
 builder
@@ -56,6 +56,20 @@ builder
         };
     });
 
+// Allow CORS for development
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+			"https://eusebius.santiagopapa.com.ar",
+			"https://eusebiusapi.santiagopapa.com.ar"
+			)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Use controllers
 builder.Services.AddControllers();
 
@@ -76,8 +90,8 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseCors();
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

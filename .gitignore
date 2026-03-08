@@ -39,3 +39,6 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Development DBs
+app.db*
+
